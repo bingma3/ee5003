@@ -20,17 +20,14 @@ def read_file(path):
 
 def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
     if msg:
-        byte_string = read_file("./video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent")
+        # byte_string = read_file("./video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent")
+        byte_string = b'2022-07-01-raspios-bullseye-i386.iso.torrent'
         hashcode = hashlib.sha256()
         hashcode.update(byte_string)
         print("Message received-> " + msg.topic + " " + str(msg.payload))  # Print a received msg
         if msg.payload[msg.payload.find(b',')+1:] == hashcode.digest():
-            print("hello client")
-            client.publish("smartooh_mqtt", "hi client")
-
-
-
-# def send_file(file):
+            bit_torrent = read_file("./video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent")
+            client.publish("smartooh_mqtt", msg.payload[:msg.payload.find(b',')+1] + bit_torrent)
 
 
 def run():
