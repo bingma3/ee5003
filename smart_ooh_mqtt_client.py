@@ -22,7 +22,7 @@ def on_message(client, userdata, msg):  # The callback for when a PUBLISH messag
     if msg:
         if msg.payload[:msg.payload.find(b',')] == b'192.168.1.92':
             try:
-                with open('/home/pi/EE5003/video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent', 'wb') as f:
+                with open('/home/pi/EE5003/video_repo/video.torrent', 'wb') as f:
                     f.write(msg.payload[msg.payload.find(b',')+1:])
                 print("Seed updated")
             except Exception as e:

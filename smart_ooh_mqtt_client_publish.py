@@ -14,7 +14,7 @@ def read_file(path):
 
 def send_request():
     # byte_string = read_file("/home/pi/EE5003/video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent")
-    byte_string = b'2022-07-01-raspios-bullseye-i386.iso.torrent'
+    byte_string = b'video.torrent'
     hashcode = hashlib.sha256()
     hashcode.update(byte_string)
     msg = b'192.168.1.92' + b',' + hashcode.digest()

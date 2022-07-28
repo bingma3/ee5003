@@ -25,7 +25,7 @@ def seed_upload(client, msg, path):
 
 def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
     if msg:
-        byte_string = b'2022-07-01-raspios-bullseye-i386.iso.torrent'
+        byte_string = b'video.torrent'
         hashcode = hashlib.sha256()
         hashcode.update(byte_string)
         print("Message received-> " + msg.topic + " " + str(msg.payload))  # Print a received msg
