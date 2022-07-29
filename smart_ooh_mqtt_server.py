@@ -30,7 +30,7 @@ def on_message(client, userdata, msg):  # The callback for when a PUBLISH messag
         hashcode.update(byte_string)
         print("Message received-> " + msg.topic + " " + str(msg.payload))  # Print a received msg
         if msg.payload[msg.payload.find(b',')+1:] == hashcode.digest():
-            seed_upload(client, msg, "./video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent")
+            seed_upload(client, msg, "./video_repo/video.torrent")
 
 
 def run():
