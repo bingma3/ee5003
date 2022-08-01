@@ -3,7 +3,7 @@ import time
 import sys
 
 ses = lt.session()
-with open("./video_repo/temp_1.mp4.torrent", 'rb') as f:
+with open("./video_repo/video.torrent", 'rb') as f:
     torrent = lt.bdecode(f.read())
 
 
