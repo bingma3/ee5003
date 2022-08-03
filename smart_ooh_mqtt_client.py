@@ -1,5 +1,15 @@
-import hashlib
+import datetime
+import socket
+
 import paho.mqtt.client as mqtt
+
+
+def get_host_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    print(f"{datetime.datetime.utcnow()} - Check Host IP Address: {ip}")
+    return ip
 
 
 def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
@@ -19,23 +29,29 @@ def read_file(path):
 
 
 def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
+    host_ip = get_host_ip()
     if msg:
-        if msg.payload[:msg.payload.find(b',')] == b'192.168.1.92':
+        if msg.payload[:msg.payload.find(b',')] == host_ip.encode() \
+                and msg.payload[msg.payload.find(b',')+1:msg.payload.find(b'#')] == b'seedupdate':
             try:
-                with open('/home/pi/EE5003/video_repo/video.torrent', 'wb') as f:
-                    f.write(msg.payload[msg.payload.find(b',')+1:])
+                with open('./video_repo/video.torrent', 'wb') as f:
+                    f.write(msg.payload[msg.payload.find(b',') + 1:])
                 print("Seed updated")
             except Exception as e:
                 print(f"Error when update the seed {e}")
 
 
-def run():
+def run(ip, port, t):
     client = mqtt.Client("smartooh_client")  # Create instance of client with client ID “digi_mqtt_test”
     client.on_connect = on_connect  # Define callback function for successful connection
     client.on_message = on_message  # Define callback function for receipt of a message
-    client.connect("192.168.1.85", 1883, 60)  # Connect to (broker, port, keepalive-time)
+    client.connect(ip, port, t)  # Connect to (broker, port, keepalive-time)
     client.loop_forever()  # Start networking daemon
 
 
 if __name__ == '__main__':
-    run()
+    server_ip = "192.168.1.85"
+    server_port = 1883
+    interval_time = 60
+    run(server_ip, server_port, interval_time)
+
