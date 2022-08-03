@@ -41,14 +41,22 @@ def mqtt_broker(path, save, ip):
     server.run()
 
 
+def uploading_original_file(path, save):
+    seeding.seeding(path, save)
+
+
 def run():
     save_dir = './video_repo'
     torrentfile_path = './video_repo/video.torrent'
     host_ip = get_host_ip()
-    schedule.every(2).minutes.do(mqtt_broker, path=torrentfile_path, save=save_dir, ip=host_ip)
-    while True:
-        schedule.run_pending()
-    # host_ip = get_host_ip()
+    # schedule.every(2).minutes.do(mqtt_broker, path=torrentfile_path, save=save_dir, ip=host_ip)
+    # schedule.every(5).seconds.do(uploading_original_file, path=torrentfile_path, save=save_dir)
+    # while True:
+    #     schedule.run_pending()
+    mqtt_task = Thread(target=mqtt_broker, args=(torrentfile_path, save_dir, host_ip))
+    mqtt_task.start()
+    seeding_task = Thread(target=uploading_original_file, args=(torrentfile_path, save_dir))
+    seeding_task.start()
 
 
 if __name__ == '__main__':
