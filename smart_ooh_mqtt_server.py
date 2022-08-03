@@ -1,6 +1,7 @@
 import hashlib
 import time
 import datetime
+import schedule
 
 import paho.mqtt.client as mqtt
 
@@ -41,15 +42,17 @@ class SmartOohServer:
                 self.seed_upload(msg)
 
     def run(self):
-        print(f"{datetime.datetime.utcnow()} - Start mqtt broker broadcasting")
-        self.client.on_connect = self.on_connect  # Define callback function for successful connection
-        self.client.on_message = self.on_message  # Define callback function for receipt of a message
-        self.client.connect(self.host_ip, 1883, 60)  # Connect to (broker, port, keepalive-time)
-        self.client.loop_start()
-        time.sleep(600)
-        self.client.disconnect()
-        self.client.loop_stop()
-        print(f"{datetime.datetime.utcnow()} - Stop mqtt broker broadcasting")
+        while True:
+            print(f"{datetime.datetime.utcnow()} - Start mqtt broker broadcasting")
+            self.client.on_connect = self.on_connect  # Define callback function for successful connection
+            self.client.on_message = self.on_message  # Define callback function for receipt of a message
+            self.client.connect(self.host_ip, 1883, 60)  # Connect to (broker, port, keepalive-time)
+            self.client.loop_start()
+            time.sleep(10)
+            self.client.disconnect()
+            self.client.loop_stop()
+            print(f"{datetime.datetime.utcnow()} - Stop mqtt broker broadcasting")
+            time.sleep(50)
 
 
 if __name__ == '__main__':

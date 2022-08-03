@@ -1,8 +1,10 @@
 import libtorrent as lt
 import time
+import datetime
+import schedule
 
 
-def seeding(path, save_dir):
+def seeding(path, save_dir, enable=True):
     ses = lt.session()
     with open(path, 'rb') as f:
         torrent = lt.bdecode(f.read())
@@ -13,10 +15,13 @@ def seeding(path, save_dir):
             }
     h = ses.add_torrent(params)
     while True:
+    print(f"{datetime.datetime.utcnow()} - Start Sharing the original files")
+    while enable:
         s = h.status()
         msg = '\r%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s'
         print((msg % (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, s.num_peers, s.state)), end=' ')
         time.sleep(1)
+    print(f"{datetime.datetime.utcnow()} - Stop Sharing the original files")
 
 
 if __name__ == '__main__':
