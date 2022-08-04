@@ -1,6 +1,17 @@
+import datetime
+import socket
+
 import paho.mqtt.publish as publish
-import time
 import hashlib
+
+
+def get_host_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    print(f"{datetime.datetime.utcnow()} - Check Host IP Address: {ip}")
+    return ip
+
 
 def read_file(path):
     with open(path, 'rb') as f:
@@ -12,13 +23,16 @@ def read_file(path):
             print('The file is empty!')
             return False
 
-def send_request():
-    # byte_string = read_file("/home/pi/EE5003/video_repo/2022-07-01-raspios-bullseye-i386.iso.torrent")
-    byte_string = b'video.torrent'
+
+def send_request(ip, port, byte_name):
     hashcode = hashlib.sha256()
-    hashcode.update(byte_string)
-    msg = b'192.168.1.92' + b',' + hashcode.digest()
-    publish.single("smartooh_mqtt", msg, hostname="192.168.1.85", port=1883)
+    hashcode.update(byte_name)
+    host_ip = get_host_ip()
+    msg = host_ip.encode() + b',' + hashcode.digest()
+    publish.single("smartooh_mqtt", msg, hostname=ip, port=port)
+
 
 if __name__ == "__main__":
-    send_request()
+    server_ip, server_port = "192.168.1.85", 1883
+    file_name = b'video.torrent'
+    send_request(server_ip, server_port, file_name)
