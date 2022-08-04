@@ -31,18 +31,10 @@ def read_file(path):
 def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
     host_ip = get_host_ip()
     if msg:
-<<<<<<< HEAD
         if msg.payload[:msg.payload.find(b',')] == b'192.168.1.92' and msg.payload[msg.payload.find(b',')+1:msg.payload.find(b'#')] == b'seedupdate':
             try:
                 with open('/home/pi/ee5003/video_repo/video.torrent', 'wb') as f:
                     f.write(msg.payload[msg.payload.find(b'#')+1:])
-=======
-        if msg.payload[:msg.payload.find(b',')] == host_ip.encode() \
-                and msg.payload[msg.payload.find(b',')+1:msg.payload.find(b'#')] == b'seedupdate':
-            try:
-                with open('./video_repo/video.torrent', 'wb') as f:
-                    f.write(msg.payload[msg.payload.find(b',') + 1:])
->>>>>>> 17e3fbdbd5ad861773809d00125aa72201e2736c
                 print("Seed updated")
                 print(msg.payload)
             except Exception as e:
