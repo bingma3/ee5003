@@ -3,7 +3,24 @@ import time
 import datetime
 import schedule
 
+<<<<<<< HEAD
+
+def seed_upload(client, msg, path):
+    bit_torrent = read_file(path)
+    client.publish("smartooh_mqtt", msg.payload[:msg.payload.find(b',') + 1] + b'seedupdate#' + bit_torrent)
+
+
+def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
+    if msg:
+        byte_string = b'video.torrent'
+        hashcode = hashlib.sha256()
+        hashcode.update(byte_string)
+        print("Message received-> " + msg.topic + " " + str(msg.payload))  # Print a received msg
+        if msg.payload[msg.payload.find(b',')+1:] == hashcode.digest():
+            seed_upload(client, msg, "./video_repo/video.torrent")
+=======
 import paho.mqtt.client as mqtt
+>>>>>>> 17e3fbdbd5ad861773809d00125aa72201e2736c
 
 
 class SmartOohServer:

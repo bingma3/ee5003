@@ -14,7 +14,6 @@ def seeding(path, save_dir, enable=True):
                 'ti': lt.torrent_info(torrent)
             }
     h = ses.add_torrent(params)
-    while True:
     print(f"{datetime.datetime.utcnow()} - Start Sharing the original files")
     while enable:
         s = h.status()
