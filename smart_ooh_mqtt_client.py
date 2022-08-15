@@ -1,6 +1,6 @@
 import datetime
 import socket
-
+import time
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 import hashlib
@@ -35,7 +35,8 @@ class SmartOohClient:
                     with open(self.path, 'wb') as f:
                         f.write(msg.payload[msg.payload.find(b'#')+1:])
                     print(f"{datetime.datetime.utcnow()} - Seed updated")
-                    self.seed_updated = True
+                    with open('./video_repo/temp', 'w') as f:
+                        f.write('true')
                 except Exception as e:
                     print(f"{datetime.datetime.utcnow()} - Error: when update the seed {e}")
 
@@ -55,14 +56,23 @@ class SmartOohClient:
         return ip
 
     def send_request(self, ip, port):
+        self.client.on_connect = self.on_connect  # Define callback function for successful connection
+        self.client.on_message = self.on_message  # Define callback function for receipt of a message
+        self.client.connect(ip, port, 60)  # Connect to (broker, port, keepalive-time)
+        self.client.loop_start()
         hashcode = hashlib.sha256()
         hashcode.update(b'video.torrent')
         msg = self.host_ip.encode() + b',' + hashcode.digest()
         while True:
-            publish.single("smartooh_mqtt", msg, hostname=ip, port=port)
-            if self.seed_updated:
-                self.seed_updated = False
-                return True
+            self.client.publish("smartooh_mqtt", msg, 0)
+            # publish.single("smartooh_mqtt", msg, hostname=ip, port=port)
+            time.sleep(0.2)
+            with open('./video_repo/temp', 'r') as f:
+                line = f.readline()
+                if line == 'true':
+                    self.client.loop_stop()
+                    self.client.disconnect()
+                    return True
 
                 
 if __name__ == '__main__':
