@@ -1,3 +1,4 @@
+
 import datetime
 import socket
 import time
@@ -34,7 +35,6 @@ class SmartOohClient:
                 try:
                     with open(self.path, 'wb') as f:
                         f.write(msg.payload[msg.payload.find(b'#')+1:])
-                    print(f"{datetime.datetime.utcnow()} - Seed updated")
                     with open('./video_repo/temp', 'w') as f:
                         f.write('true')
                 except Exception as e:
@@ -63,15 +63,16 @@ class SmartOohClient:
         hashcode = hashlib.sha256()
         hashcode.update(b'video.torrent')
         msg = self.host_ip.encode() + b',' + hashcode.digest()
+        # print(f"{datetime.datetime.utcnow()} - Seed requested")
         while True:
             self.client.publish("smartooh_mqtt", msg, 0)
-            # publish.single("smartooh_mqtt", msg, hostname=ip, port=port)
             time.sleep(0.2)
             with open('./video_repo/temp', 'r') as f:
                 line = f.readline()
                 if line == 'true':
                     self.client.loop_stop()
                     self.client.disconnect()
+                    # print(f"{datetime.datetime.utcnow()} - Seed updated")
                     return True
 
                 
