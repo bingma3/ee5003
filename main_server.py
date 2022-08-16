@@ -23,7 +23,7 @@ from threading import Thread
 import socket
 import datetime
 from smart_ooh_mqtt_server import SmartOohServer
-import seeding
+import smart_oon_bt
 import make_seed
 import schedule
 
@@ -43,7 +43,7 @@ def mqtt_broker(path, save, ip):
 
 def uploading_original_file(path, save):
     seeding.seeding(path, save)
-    
+
 
 def run():
     save_dir = './video_repo'
@@ -57,7 +57,6 @@ def run():
     mqtt_task.start()
     seeding_task = Thread(target=uploading_original_file, args=(torrentfile_path, save_dir))
     seeding_task.start()
-
 
 
 if __name__ == '__main__':

@@ -19,8 +19,9 @@ from threading import Thread
 import socket
 import datetime
 from smart_ooh_mqtt_client import SmartOohClient
-import seeding
+import smart_oon_bt
 import hashlib
+
 
 def get_host_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -28,7 +29,6 @@ def get_host_ip():
     ip = s.getsockname()[0]
     print(f"{datetime.datetime.utcnow()} - Check Host IP Address: {ip}")
     return ip
-
 
 
 def read_file(path):
@@ -51,20 +51,20 @@ def update_content(client, ip, port, path, save):
     except Exception as e:
         print(f"{datetime.datetime.utcnow()} - {e}")
 
+
 def run():
     save_dir = './video_repo'
     torrentfile_path = './video_repo/video.torrent'
     server_ip = "192.168.1.85"
     server_port = 1883
     interval_time = 60
-    
+
     mqtt_client = SmartOohClient(torrentfile_path, save_dir)
 
     mqtt_task = Thread(target=mqtt_client.run, args=(server_ip, server_port, interval_time))
     mqtt_task.start()
 
     update_content(mqtt_client, server_ip, server_port, torrentfile_path, save_dir)
-
 
 
 if __name__ == '__main__':
